@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>List of Images</title>
+</head>
+<body>
+<table cellpadding="2.0" width="50%" border="1.0" align="center">
+    <caption align="center"><b>List of Images</b></caption>
+    <tr><th>Image Name</th><th>Modified Date</th><th>Action</th></tr>
+    {% set  ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif'] %}
+    {% for image in s3.Bucket(bucketname).objects.all(): %}
+        {% set imageext = image.key %}
+        {% set imageext = imageext.split('.')[-1] %}
+        {% if imageext in ALLOWED_EXTENSIONS :%}
+            {% set obj = s3.Object(bucket_name= bucketname, key = image.key) %}
+            {% set res = obj.last_modified %}
+
+    <tr><td><a href="/view/{{image.key}}"> {{ image.key }}</a> </td> <td><time>{{res }}</time></td><td> <a href="/delete/{{image.key}}">Delete</a></td> </tr>
+    {% endif %}
+    {% endfor %}
+</table>
+</body>
+</html>
